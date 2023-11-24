@@ -130,10 +130,11 @@ def run(
 
     # Setup Model
     model = YOLO(f'{weights}')
+    # model.predict()
     model.to('cuda') if device == '0' else model.to('cpu')
 
     # Video setup
-    videocapture = cv2.VideoCapture(1)
+    videocapture = cv2.VideoCapture(0)
     frame_width, frame_height = int(videocapture.get(3)), int(videocapture.get(4))
     fps, fourcc = int(videocapture.get(5)), cv2.VideoWriter_fourcc(*'mp4v')
 
@@ -157,8 +158,8 @@ def run(
         frame = image_resize(frame, height = 720)
         
         # Extract the results
-        results = model.track(frame, persist=True)
-        results = results[results.class_id == 0]
+        results = model.track(frame, persist=True, classes=0)
+        print(type(results[0].names))
 
         if results[0].boxes.id is not None:
             boxes = results[0].boxes.xywh.cpu()
@@ -178,7 +179,6 @@ def run(
                 annotator.box_label(xyxy, label, color=bbox_color)
 
                 # Tracking Lines plot
-                print("track_id:", track_id, track_history[track_id])
                 track = track_history[track_id]
                 track.append((float(x), float(y)))
                 # if len(track) > 30:
