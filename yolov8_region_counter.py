@@ -130,11 +130,12 @@ def run(
 
     # Setup Model
     model = YOLO(f'{weights}')
-    # model.predict()
     model.to('cuda') if device == '0' else model.to('cpu')
 
     # Video setup
-    videocapture = cv2.VideoCapture(0)
+    videocapture = cv2.VideoCapture(1)
+    videocapture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    videocapture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
     frame_width, frame_height = int(videocapture.get(3)), int(videocapture.get(4))
     fps, fourcc = int(videocapture.get(5)), cv2.VideoWriter_fourcc(*'mp4v')
 
